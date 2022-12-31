@@ -1,1 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List</title>
 
+    <script>
+        const INVALID_CHARS = "<>@#*";
+        function initialize()
+        {
+            listOutputBox = document.getElementById('divout');
+            logFormObject = document.getElementById('logform');
+            logArrangeObject = document.getElementById('arrangeform');
+            // list = [1,2,3,4,5,6,7,8,9,10];
+            list = [];
+        }
+
+        function addNewItem(msg)
+        {
+            //Enhancement, no duplicates
+            for(var i =0;i<list.length;i++)
+            {
+                if (msg === list[i])
+                {
+                    return;
+                }
+            }
+            var thing = validate(msg);
+            list.push(thing)
+            logFormObject.logInput.value = '';
+            display();
+        }
+
+        function validate(msg)
+        {
+            for(var i = 0; i<INVALID_CHARS.length; i++)
+            {
+                var charIdx = msg.indexOf(INVALID_CHARS.charAt(i))
+                while(charIdx>=0)
+                {
+                   msg =msg.substring(0, charIdx) + msg.substring(charIdx +1);
+                   charIdx = msg.indexOf(INVALID_CHARS.charAt(i))
+                }
+            }
+            return msg;
+        }
+
+        function deleteItem()
+        {
+        var idx = parseInt(logArrangeObject.numitemarrange.value)-1;
+
+        if(idx < 0 || idx >= list.length)
+            return;
+        
+        list.splice(idx,1);
+
+        logArrangeObject.numitemarrange.value = "";
+        display();
+        
+        }
+
+        function moveItemUp()
+        {
+            var idx = parseInt(logArrangeObject.numitemarrange.value)-1;
+            if((idx-1)<0|| idx >= list.length)
+            {
+                return;
+            }
+            var temp = list[idx-1];
+            list[idx-1] = list[idx];
+            list[idx] = temp;
+
+            var newValue = parseInt(logArrangeObject.numitemarrange.value)-1;
+            logArrangeObject.numitemarrange.value= newValue;
+            display();
+        }
+
+        function moveItemDown()
+        {
+            var idx = parseInt(logArrangeObject.numitemarrange.value)-1;
+            if(idx<0|| idx >= (list.length-1))
+            {
+                return;
+            }
+            var temp = list[idx +1];
+            list[idx+1] = list[idx];
+            list[idx] = temp;
+            
+            var newValue = parseInt(logArrangeObject.numitemarrange.value)+1;
+            logArrangeObject.numitemarrange.value= newValue;
+
+            display();
+        }
+
+        function display()
+        {
+            listOutputBox.innerHTML = '';
+            for(var i =0; i<list.length;i++)
+            {
+                listOutputBox.innerHTML += (i+1) + ": " + list[i] + "<br />";
+            }
+        }
+    </script>
+
+    <style>
+        body
+        {
+            display: flex;
+            flex-direction: row;
+            justify-content:space-evenly;
+            background-color:lightgoldenrodyellow;
+        }
+        h1 
+        {
+            border: 1px solid #dddddd;
+            border-radius:10px;
+            background-color:#dddddd;
+            padding:5px;
+            box-shadow:3px 3px 6px 3px black;
+            font: bold 50pt calibri;
+        }
+
+        #divout
+        {
+            font: bold 25pt arial;
+            text-shadow: 2px 2px lightgray;
+        }
+
+        #forms
+        {
+          
+            
+        }
+
+        
+        #theshow
+        {
+
+        }
+    </style>
+
+</head>
+
+<body onload ='initialize();'>
+<div id ='forms'>
+    <h1>SHOP LIFT UP, INC.</h1>
+
+    <p>Enter New Item: </p> <br />
+    <form id ='logform'>
+            <textarea name = 'logInput'></textarea>
+    </form>
+    <button onclick = 'addNewItem(logFormObject.logInput.value);'>Add Item</button>
+
+    <hr /><br />
+
+        <p>Change Your List: </p>
+        <form id = 'arrangeform'>
+            <input type = 'number' name = 'numitemarrange' />
+        </form>
+        <button onclick = 'moveItemUp();'>Move It Up One</button>
+        <button onclick = 'moveItemDown();'>Move It Down One</button>
+        <button onclick = 'deleteItem();'>Delete The Item</button>
+
+    <hr /><br />
+</div>
+
+<div id ='theshow'>
+    <h1>The List:</h1>
+    <div id ='divout'></div>
+</div>
+
+</body>
+</html>
